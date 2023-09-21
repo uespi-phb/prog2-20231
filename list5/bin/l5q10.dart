@@ -21,10 +21,10 @@ bool isPermutation(String arg1, String arg2) {
   }
 
   for (int i = 0; i < arg1.length; i++) {
-    if (arg2.contains(arg1[i])) {
+    if (!arg2.contains(arg1[i])) {
       return false;
     }
-    if (arg1.contains(arg2[i])) {
+    if (!arg1.contains(arg2[i])) {
       return false;
     }
   }
