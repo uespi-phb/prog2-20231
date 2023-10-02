@@ -55,14 +55,16 @@ class Number {
   }
 
   int factorial() {
-    int mulBinaryDigits(int a, int b) {
-      return math.log(a) ~/ math.log(b) + 1;
+    int mulBits(int a, int b) {
+      var aBits = math.log(a) / math.log(2);
+      var bBits = math.log(b) / math.log(2);
+      return (aBits + bBits).toInt() + 1;
     }
 
     int f = 1;
 
-    for (int k = 2; k <= _number; k++) {
-      if (mulBinaryDigits(f, k) > 63) {
+    for (int k = _number; k > 0; k--) {
+      if (mulBits(f, k) > 63) {
         throw Exception('Overflow: result is to big.');
       }
       f = f * k;
