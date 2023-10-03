@@ -1,37 +1,34 @@
 class Rational {
-  final int _num;
-  final int _den;
+  final int num;
+  final int den;
 
-  Rational(
-    this._num, [
-    this._den = 1,
-  ]) {
-    _validate();
+  const Rational(
+    this.num, [
+    this.den = 1,
+  ]);
+
+  factory Rational.from(Rational r) {
+    return Rational(r.num, r.den);
   }
 
-  Rational.from(Rational r)
-      : _num = r._num,
-        _den = r._den {
-    _validate();
-  }
-
-  Rational.fromString(String r)
-      : _num = int.parse(r.split('/')[0]),
-        _den = int.parse(r.split('/')[1]) {
-    _validate();
+  factory Rational.fromString(String r) {
+    var tokens = r.split('/');
+    if (tokens.isEmpty || tokens.length > 2) {
+      throw Exception('Invalid argument: $r');
+    }
+    var num = int.tryParse(tokens[0]);
+    var den = (tokens.length == 2) ? int.tryParse(tokens[1]) : 1;
+    if ((num == null) || (den == null)) {
+      throw Exception('Invalid argument: $r');
+    }
+    return Rational(num, den);
   }
 
   @override
   String toString() {
-    String num = (_den < 0) ? '${-_num}' : '$_num';
-    String den = '${_den.abs()}';
-    return (_den != 1) ? '$num/$den' : num;
-  }
-
-  void _validate() {
-    if (_den == 0) {
-      throw Exception('Rational denominator cannot be zero');
-    }
+    String n = (den < 0) ? '${-num}' : '$num';
+    String d = '${den.abs()}';
+    return (den != 1) ? '$n/$d' : n;
   }
 
   int _signal(int n) => (n > 0)
@@ -40,24 +37,57 @@ class Rational {
           ? -1
           : 0;
 
+  double toDouble() => num / den;
+
   Rational simplify() {
-    int num = _num.abs();
-    int den = _den.abs();
-    int max = (num < den) ? num : den;
+    int numerator = num.abs();
+    int denominator = den.abs();
+    int max = (numerator < denominator) ? numerator : denominator;
     int div = 2;
 
     while (div <= max) {
-      if ((num % div == 0) && (den % div == 0)) {
-        num ~/= div; // num = num ~/ div
-        den ~/= div; // den = den ~/ div
-        max = (num < den) ? num : den;
+      if ((numerator % div == 0) && (denominator % div == 0)) {
+        numerator ~/= div; // num = num ~/ div
+        denominator ~/= div; // den = den ~/ div
+        max = (numerator < denominator) ? numerator : denominator;
       } else {
         div++;
       }
     }
-    num = _signal(_num) * num;
-    den = _signal(_den) * den;
+    numerator = _signal(numerator) * numerator;
+    denominator = _signal(denominator) * denominator;
 
-    return Rational(num, den);
+    return Rational(numerator, denominator);
+  }
+
+  Rational operator +(Rational r) => Rational(
+        num * r.den + r.num * den,
+        den * r.den,
+      );
+  Rational operator -(Rational r) => Rational(
+        num * r.den - r.num * den,
+        den * r.den,
+      );
+  Rational operator *(Rational r) => Rational(
+        num * r.num,
+        den * r.den,
+      );
+  Rational operator /(Rational r) => Rational(
+        num * r.den,
+        den * r.num,
+      );
+
+  bool operator >(Rational r) => toDouble() > r.toDouble();
+  bool operator <(Rational r) => toDouble() < r.toDouble();
+  bool operator >=(Rational r) => toDouble() >= r.toDouble();
+  bool operator <=(Rational r) => toDouble() <= r.toDouble();
+
+  @override
+  // ignore: hash_and_equals
+  bool operator ==(Object other) {
+    if (other is Rational) {
+      return toDouble() == other.toDouble();
+    }
+    return false;
   }
 }
