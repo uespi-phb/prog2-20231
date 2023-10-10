@@ -1,5 +1,6 @@
 /*
  * Escreva um programa que lê um inteiro N, calcule e imprima o valor da seguinte soma:
+ *
  * S = 1/1 + 1/2 + 1/3 + 1/4 + ... + 1/N
 */
 

@@ -2,10 +2,14 @@ class Rational {
   final int num;
   final int den;
 
-  const Rational(
+  Rational(
     this.num, [
     this.den = 1,
-  ]);
+  ]) {
+    if (den == 0) {
+      throw Exception('Denominator cannot be zero');
+    }
+  }
 
   factory Rational.from(Rational r) {
     return Rational(r.num, r.den);
@@ -24,21 +28,6 @@ class Rational {
     return Rational(num, den);
   }
 
-  @override
-  String toString() {
-    String n = (den < 0) ? '${-num}' : '$num';
-    String d = '${den.abs()}';
-    return (den != 1) ? '$n/$d' : n;
-  }
-
-  int _signal(int n) => (n > 0)
-      ? 1
-      : (n < 0)
-          ? -1
-          : 0;
-
-  double toDouble() => num / den;
-
   Rational simplify() {
     int numerator = num.abs();
     int denominator = den.abs();
@@ -54,39 +43,58 @@ class Rational {
         div++;
       }
     }
-    numerator = _signal(numerator) * numerator;
-    denominator = _signal(denominator) * denominator;
+    numerator = numerator.sign * numerator;
+    denominator = denominator.sign * denominator;
 
     return Rational(numerator, denominator);
   }
+
+  @override
+  String toString() {
+    String n = (den < 0) ? '${-num}' : '$num';
+    String d = '${den.abs()}';
+    return (den != 1) ? '$n/$d' : n;
+  }
+
+  double toDouble() => num / den;
 
   Rational operator +(Rational r) => Rational(
         num * r.den + r.num * den,
         den * r.den,
       );
+
   Rational operator -(Rational r) => Rational(
         num * r.den - r.num * den,
         den * r.den,
       );
+
+  Rational operator -() => Rational(
+        -num,
+        den,
+      );
+
   Rational operator *(Rational r) => Rational(
         num * r.num,
         den * r.den,
       );
+
   Rational operator /(Rational r) => Rational(
         num * r.den,
         den * r.num,
       );
 
-  bool operator >(Rational r) => toDouble() > r.toDouble();
-  bool operator <(Rational r) => toDouble() < r.toDouble();
-  bool operator >=(Rational r) => toDouble() >= r.toDouble();
-  bool operator <=(Rational r) => toDouble() <= r.toDouble();
+  int _compare(Rational r) => (toDouble() - r.toDouble()).sign.toInt();
+
+  bool operator >(Rational r) => _compare(r) > 0;
+  bool operator <(Rational r) => _compare(r) < 0;
+  bool operator >=(Rational r) => _compare(r) >= 0;
+  bool operator <=(Rational r) => _compare(r) <= 0;
 
   @override
   // ignore: hash_and_equals
   bool operator ==(Object other) {
     if (other is Rational) {
-      return toDouble() == other.toDouble();
+      return _compare(other) == 0;
     }
     return false;
   }
