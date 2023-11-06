@@ -17,24 +17,36 @@ class Transaction {
 
   final TransactionType type;
   final DateTime date;
-  final double value;
   final String? description;
+  late final double _value;
 
   Transaction({
     required this.type,
-    required this.value,
     required this.date,
+    required double value,
     this.description,
-  });
+  }) {
+    _setValue(value);
+  }
 
   Transaction.now({
     required this.type,
-    required this.value,
+    required double value,
     this.description,
-  }) : date = DateTime.now();
+  }) : date = DateTime.now() {
+    _setValue(value);
+  }
 
-  static bool isCredit(TransactionType type) =>
-      _creditTransactions.contains(type);
-  static bool isDebit(TransactionType type) =>
-      !_creditTransactions.contains(type);
+  void _setValue(double value) {
+    if (value.isNegative) {
+      throw Exception('Negative trasaction value');
+    }
+    _value = isDebit ? -value : value;
+  }
+
+  double get value => _value;
+
+  bool get isCredit => _creditTransactions.contains(type);
+
+  bool get isDebit => !_creditTransactions.contains(type);
 }

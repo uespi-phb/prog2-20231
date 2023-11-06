@@ -36,20 +36,24 @@ abstract class Account {
     ));
   }
 
-  void deposit(double value) {
-    transactions.add(Transaction.now(
-      type: TransactionType.deposit,
-      value: value,
-    ));
-  }
-
-  void withdrawal(double value) {
+  void _checkBalance(double value) {
     if (value > balance) {
       throw Exception('Insufficient funds');
     }
-    transactions.add(Transaction.now(
-      type: TransactionType.withdrawal,
-      value: value,
-    ));
+  }
+
+  void deposit(double value) {
+    addTransaction(TransactionType.deposit, value);
+  }
+
+  void withdrawal(double value) {
+    _checkBalance(value);
+    addTransaction(TransactionType.withdrawal, value);
+  }
+
+  void payment(double value) {
+    _checkBalance(value);
+
+    addTransaction(TransactionType.payment, value);
   }
 }
