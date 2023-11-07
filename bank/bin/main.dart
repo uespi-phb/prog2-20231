@@ -1,5 +1,22 @@
-import 'package:bank/account.dart';
+import 'package:bank/current_account.dart';
+import 'package:bank/special_account.dart';
 
 void main() {
-  Account a = Account(23, 12660, 'João de Barro');
+  var c = CurrentAccount(
+    agency: 123,
+    number: 123456,
+    clientName: 'Fulano de Tal',
+  );
+  var s = SpecialAccount(
+    agency: 645,
+    number: 98755,
+    clientName: 'Cicrano da Silva',
+    limit: 1000.00,
+  );
+
+  c.deposit(500.00);
+  c.withdrawal(100.00);
+
+  c.statement();
+  // s.statement();
 }
