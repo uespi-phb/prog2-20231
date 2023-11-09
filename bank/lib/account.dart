@@ -8,6 +8,17 @@ enum AccountType {
   saving,
 }
 
+class StatementData {
+  static const width = 40;
+  static const dateWidth = 6;
+  static const valueWidth = 12;
+  static const tabs = [
+    dateWidth,
+    (width - dateWidth - valueWidth),
+    -valueWidth,
+  ];
+}
+
 abstract class Account {
   final AccountType type;
   final int agency;
@@ -116,38 +127,29 @@ abstract class Account {
   }
 
   void statementHeader() {
-    const width = 40;
-    const dateWidth = 6;
-    const valueWidth = 12;
-    const tabs = [
-      dateWidth,
-      (width - dateWidth - valueWidth),
-      -valueWidth,
-    ];
-
-    centerPrint('BANCO EXEMPLO S/A', width);
-    centerPrint('EXTRATO DE CONTA $typeName', width);
-    centerPrint('$agency/$number ${clientName.toUpperCase()}', width);
-    print('-' * width);
-    tabPrint('DATA\tTRANSAÇÃO\tVALOR', tabs);
+    centerPrint('BANCO EXEMPLO S/A', StatementData.width);
+    centerPrint('EXTRATO DE CONTA $typeName', StatementData.width);
+    centerPrint(
+        '$agency/$number ${clientName.toUpperCase()}', StatementData.width);
+    print('-' * StatementData.width);
+    tabPrint('DATA\tTRANSAÇÃO\tVALOR', StatementData.tabs);
   }
 
   void statementBody() {
-    const width = 40;
-    const dateWidth = 6;
-    const valueWidth = 12;
-    const tabs = [
-      dateWidth,
-      (width - dateWidth - valueWidth),
-      -valueWidth,
-    ];
     for (var t in transactions) {
       var date = dateToDDMM(t.date);
       var desc = t.description;
       var value = valueToString(t.value);
-      tabPrint('$date\t$desc\t$value', tabs);
+      tabPrint('$date\t$desc\t$value', StatementData.tabs);
     }
   }
 
-  void statementFooter() {}
+  void statementFooter() {
+    var tabs = List<int>.from(StatementData.tabs);
+
+    tabs[1] = -tabs[1];
+
+    print('-' * StatementData.width);
+    tabPrint('\tSALDO\t$balance', tabs);
+  }
 }

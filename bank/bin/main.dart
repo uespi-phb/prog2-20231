@@ -14,9 +14,8 @@ void main() {
     limit: 1000.00,
   );
 
-  c.deposit(500.00);
-  c.withdrawal(100.00);
+  s.deposit(123456.92);
+  s.withdrawal(100.00);
 
-  c.statement();
-  // s.statement();
+  s.statement();
 }

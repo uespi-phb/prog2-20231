@@ -38,14 +38,31 @@ String dateToDDMM(DateTime date, [String separator = '.']) {
 }
 
 String valueToString(
-  double value, [
-  decimalPrecision = 2,
-  decimalSeparator = ',',
-  thousandSeparator = '.',
-]) {
-  var result = value.toStringAsFixed(decimalPrecision);
-  if (decimalSeparator != '.') {
-    result = result.replaceAll('.', decimalSeparator);
+  double value, {
+  int decimalPrecision = 2,
+  String decimalSeparator = ',',
+  String thousandSeparator = '.',
+}) {
+  var result = '';
+  var signal = value.isNegative ? 'D' : 'C';
+  var parts = value.abs().toStringAsFixed(decimalPrecision).split('.');
+  var intPart = parts.isNotEmpty ? parts[0] : '';
+  var decPart = parts.length > 1 ? parts[1] : '';
+  var thounsandPlaces = intPart.length % 3;
+  var i = 0;
+
+  if (thounsandPlaces == 0) {
+    thounsandPlaces = 3;
   }
-  return result;
+
+  while (i < intPart.length) {
+    result = result + intPart.substring(i, i + thounsandPlaces);
+    if (i + thounsandPlaces < intPart.length) {
+      result += thousandSeparator;
+    }
+    i += thounsandPlaces;
+    thounsandPlaces = 3;
+  }
+
+  return '$result$decimalSeparator$decPart$signal';
 }
