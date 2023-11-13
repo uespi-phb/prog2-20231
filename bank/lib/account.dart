@@ -20,6 +20,8 @@ class StatementData {
 }
 
 abstract class Account {
+  static int lastNumber = 1000;
+
   final AccountType type;
   final int agency;
   final int number;
@@ -33,6 +35,17 @@ abstract class Account {
     required this.number,
     required this.clientName,
   });
+
+  Account.auto({
+    required this.type,
+    required this.agency,
+    required this.clientName,
+  }) : number = ++lastNumber;
+
+  @override
+  String toString() {
+    return '${type.name}($agency, $number, $clientName)';
+  }
 
   double get balance {
     double sum = 0.0;

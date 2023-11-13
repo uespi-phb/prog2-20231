@@ -21,7 +21,7 @@ class SpecialAccount extends Account {
     var tabs = List<int>.from(StatementData.tabs);
     tabs[1] = -tabs[1];
 
-    var fBalance = valueToString(super.balance, decimalPrecision: 0);
+    var fBalance = valueToString(super.balance);
     var fLimit = valueToString(limit);
     var fAvailable = valueToString(balance);
 
