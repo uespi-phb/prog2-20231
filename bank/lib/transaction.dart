@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 enum TransactionNature {
   credit,
   debit,
@@ -45,6 +47,17 @@ class Transaction {
   })  : date = DateTime.now(),
         _description = description {
     _setValue(value, nature);
+  }
+
+  String toJson() => jsonEncode(toMap());
+
+  Map<String, dynamic> toMap() {
+    return {
+      'type': type.index,
+      'date': date.toIso8601String().substring(0, 19),
+      'value': double.parse(value.toStringAsFixed(2)),
+      'description': _description,
+    };
   }
 
   void _setValue(double value, TransactionNature nature) {

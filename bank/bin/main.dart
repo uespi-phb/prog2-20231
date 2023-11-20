@@ -1,9 +1,9 @@
-import 'package:bank/account.dart';
-import './fake_data.dart';
+import 'package:bank/bank.dart';
 
 void main() {
-  var accounts = <Account>[];
+  Bank bank = Bank('BANCO EXEMPLO S/A', seed: 100);
 
-  createFakeData(accounts, 10);
-  showFakeData(accounts);
+  bank.generateFakeAccounts(5);
+
+  bank.saveAccountsAsJson('./accounts.json');
 }

@@ -12,4 +12,12 @@ abstract class RevenueAccount extends Account {
     required this.yieldRatePerYear,
     required this.yieldPeriodInDays,
   });
+
+  @override
+  AccountMap toMap() {
+    var map = super.toMap();
+    map['yieldRatePerYear'] = yieldRatePerYear;
+    map['yieldPeriodInDays'] = yieldPeriodInDays;
+    return map;
+  }
 }

@@ -1,6 +1,8 @@
 import './transaction.dart';
 import './utils.dart';
 
+typedef AccountMap = Map<String, dynamic>;
+
 enum AccountType {
   current,
   special,
@@ -47,6 +49,13 @@ abstract class Account {
     return '${type.name}($agency, $number, $clientName)';
   }
 
+  AccountMap toMap() => {
+        'type': type.name,
+        'agency': agency,
+        'number': number,
+        'name': clientName,
+      };
+
   double get balance {
     double sum = 0.0;
 
@@ -78,44 +87,49 @@ abstract class Account {
     }
   }
 
-  void deposit(double value) {
+  void deposit(double value, {DateTime? date}) {
     addTransaction(
       TransactionNature.credit,
       TransactionType.deposit,
       value,
+      date: date,
     );
   }
 
-  void withdrawal(double value) {
+  void withdrawal(double value, {DateTime? date}) {
     _checkBalance(value);
     addTransaction(
       TransactionNature.debit,
       TransactionType.withdrawal,
       value,
+      date: date,
     );
   }
 
-  void payment(double value) {
+  void payment(double value, {DateTime? date}) {
     _checkBalance(value);
     addTransaction(
       TransactionNature.debit,
       TransactionType.payment,
       value,
+      date: date,
     );
   }
 
-  void transferTo(Account account, double value) {
+  void transferTo(Account account, double value, {DateTime? date}) {
     _checkBalance(value);
     addTransaction(
       TransactionNature.debit,
       TransactionType.transfer,
       value,
+      date: date,
       description: 'TRANSF P/ AG.${account.agency} CC.${account.number}',
     );
     account.addTransaction(
       TransactionNature.credit,
       TransactionType.transfer,
       value,
+      date: date,
       description: 'TRANSF DE AG.$agency CC.$number',
     );
   }
@@ -163,6 +177,6 @@ abstract class Account {
     tabs[1] = -tabs[1];
 
     print('-' * StatementData.width);
-    tabPrint('\tSALDO\t$balance', tabs);
+    tabPrint('\tSALDO\t${valueToString(balance)}', tabs);
   }
 }

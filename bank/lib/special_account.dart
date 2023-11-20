@@ -17,6 +17,13 @@ class SpecialAccount extends Account {
   }
 
   @override
+  AccountMap toMap() {
+    var map = super.toMap();
+    map['limit'] = limit;
+    return map;
+  }
+
+  @override
   void statementFooter() {
     var tabs = List<int>.from(StatementData.tabs);
     tabs[1] = -tabs[1];
