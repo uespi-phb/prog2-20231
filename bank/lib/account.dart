@@ -1,8 +1,6 @@
 import './transaction.dart';
 import './utils.dart';
 
-typedef AccountMap = Map<String, dynamic>;
-
 enum AccountType {
   current,
   special,
@@ -44,17 +42,18 @@ abstract class Account {
     required this.clientName,
   }) : number = ++lastNumber;
 
-  @override
-  String toString() {
-    return '${type.name}($agency, $number, $clientName)';
-  }
-
-  AccountMap toMap() => {
+  Map<String, dynamic> toMap() => {
         'type': type.name,
         'agency': agency,
         'number': number,
         'name': clientName,
+        'trans': transactions,
       };
+
+  @override
+  String toString() {
+    return '${type.name}($agency, $number, $clientName)';
+  }
 
   double get balance {
     double sum = 0.0;

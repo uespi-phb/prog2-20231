@@ -1,3 +1,5 @@
+import 'package:bank/utils.dart';
+
 import './account.dart';
 
 abstract class RevenueAccount extends Account {
@@ -14,9 +16,9 @@ abstract class RevenueAccount extends Account {
   });
 
   @override
-  AccountMap toMap() {
+  Map<String, dynamic> toMap() {
     var map = super.toMap();
-    map['yieldRatePerYear'] = yieldRatePerYear;
+    map['yieldRatePerYear'] = yieldRatePerYear.toFixed(4);
     map['yieldPeriodInDays'] = yieldPeriodInDays;
     return map;
   }

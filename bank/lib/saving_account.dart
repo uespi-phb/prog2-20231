@@ -14,4 +14,10 @@ class SavingAccount extends RevenueAccount {
           yieldRatePerYear: _yieldRatePerYear,
           yieldPeriodInDays: _yieldPeriodInDays,
         );
+
+  factory SavingAccount.fromMap(Map<String, dynamic> map) => SavingAccount(
+        agency: map['agency'],
+        number: map['number'],
+        clientName: map['name'],
+      );
 }

@@ -11,16 +11,23 @@ class SpecialAccount extends Account {
     required this.limit,
   }) : super(type: AccountType.special);
 
+  factory SpecialAccount.fromMap(Map<String, dynamic> map) => SpecialAccount(
+        agency: map['agency'],
+        number: map['number'],
+        clientName: map['name'],
+        limit: map['limit'],
+      );
+
   @override
-  double get balance {
-    return super.balance + limit;
+  Map<String, dynamic> toMap() {
+    var map = super.toMap();
+    map['limit'] = limit.toFixed(4);
+    return map;
   }
 
   @override
-  AccountMap toMap() {
-    var map = super.toMap();
-    map['limit'] = limit;
-    return map;
+  double get balance {
+    return super.balance + limit;
   }
 
   @override

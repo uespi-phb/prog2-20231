@@ -66,3 +66,8 @@ String valueToString(
 
   return '$result$decimalSeparator$decPart$signal';
 }
+
+extension FixedDouble on double {
+  double toFixed(int fractionDigits) =>
+      double.parse(toStringAsFixed(fractionDigits));
+}

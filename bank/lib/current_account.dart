@@ -6,4 +6,10 @@ class CurrentAccount extends Account {
     required super.number,
     required super.clientName,
   }) : super(type: AccountType.current);
+
+  factory CurrentAccount.fromMap(Map<String, dynamic> map) => CurrentAccount(
+        agency: map['agency'],
+        number: map['number'],
+        clientName: map['name'],
+      );
 }

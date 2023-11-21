@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:faker/faker.dart';
 
 import './account.dart';
@@ -144,19 +147,98 @@ class Bank {
   void showAccountStatements() {
     for (var account in accounts) {
       account.statement();
-      print('#' * 80);
+      print('=' * 80);
     }
   }
 
   void saveAccountsAsJson(String fileName) {
-    // var accountList = <AccountMap>[];
+    var json = jsonEncode(
+      accounts,
+      toEncodable: (elem) {
+        if (elem is Account) {
+          return elem.toMap();
+        } else if (elem is Transaction) {
+          return elem.toMap();
+        }
+        throw Exception('Error on JSON convertion');
+      },
+    );
+    File(fileName).writeAsStringSync(json);
+  }
 
-    print(accounts);
-    print('---------');
-    for (var account in accounts) {
-      print(account.toMap());
+  void loadAccountsFromJson(String fileName) {
+    final types = <String, dynamic>{};
+
+    types.addEntries(
+      AccountType.values.map((elem) => MapEntry(elem.name, elem)),
+    );
+
+    types.addEntries(
+      TransactionType.values.map((elem) => MapEntry(elem.name, elem)),
+    );
+
+    List jsonAccounts =
+        jsonDecode(_loadFromFile(fileName), reviver: (key, value) {
+      if (key is String) {
+        switch (key) {
+          case 'type':
+            return types[value as String];
+          case 'date':
+            return DateTime.parse(value as String);
+          default:
+            return value;
+        }
+      } else if (key is int) {
+        return _makeObject(value as Map<String, dynamic>);
+      } else if (key == null) {
+        return value;
+      }
+      throw Exception('Invalid JSON data convertion: ($key, $value)');
+    });
+
+    accounts.clear();
+    accounts.addAll(jsonAccounts.map<Account>((account) => account));
+  }
+
+  String _loadFromFile(String fileName) {
+    return File(fileName).readAsStringSync();
+  }
+
+  Object _makeObject(Map<String, dynamic> map) {
+    var type = map['type'];
+
+    if (type is AccountType) {
+      return _makeAccount(type, map);
+    } else if (type is TransactionType) {
+      return _makeTransaction(type, map);
     }
+    throw Exception('Unexpected "type" value: $type}');
+  }
 
-    //File(fileName).writeAsStringSync(json);
+  Account _makeAccount(AccountType type, Map<String, dynamic> map) {
+    switch (type) {
+      case AccountType.current:
+        return CurrentAccount.fromMap(map);
+      case AccountType.special:
+        return SpecialAccount.fromMap(map);
+      case AccountType.saving:
+        return SavingAccount.fromMap(map);
+      case AccountType.investment:
+        return InvestmentAccount.fromMap(map);
+      default:
+        throw Exception('Unexpected "type" value: ${map["type"]}');
+    }
+  }
+
+  Transaction _makeTransaction(TransactionType type, Map<String, dynamic> map) {
+    return Transaction(
+      type: type,
+      nature: map['value'] >= 0.0
+          ? TransactionNature.credit
+          : TransactionNature.debit,
+      date: map['date'],
+      value: (map['value'] as double).abs(),
+      description: map['desc'],
+    );
   }
 }

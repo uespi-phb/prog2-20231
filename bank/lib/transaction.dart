@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'package:bank/utils.dart';
 
 enum TransactionNature {
   credit,
@@ -26,8 +26,8 @@ class Transaction {
 
   final TransactionType type;
   final DateTime date;
-  final String? _description;
   late final double _value;
+  final String? _description;
 
   Transaction({
     required TransactionNature nature,
@@ -49,14 +49,12 @@ class Transaction {
     _setValue(value, nature);
   }
 
-  String toJson() => jsonEncode(toMap());
-
   Map<String, dynamic> toMap() {
     return {
-      'type': type.index,
+      'type': type.name,
       'date': date.toIso8601String().substring(0, 19),
-      'value': double.parse(value.toStringAsFixed(2)),
-      'description': _description,
+      'value': _value.toFixed(4),
+      'desc': _description,
     };
   }
 

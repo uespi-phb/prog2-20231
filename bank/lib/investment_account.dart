@@ -14,4 +14,12 @@ class InvestmentAccount extends RevenueAccount {
           type: AccountType.investment,
           yieldPeriodInDays: _yieldPeriodInDays,
         );
+
+  factory InvestmentAccount.fromMap(Map<String, dynamic> map) =>
+      InvestmentAccount(
+        agency: map['agency'],
+        number: map['number'],
+        clientName: map['name'],
+        yieldRatePerYear: map['yieldRatePerYear'],
+      );
 }
